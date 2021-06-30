@@ -12,11 +12,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace tempApp
+
+namespace ProbForInterview
 {
     public partial class Form1 : Form
     {
-        private readonly double populationLimit = 61954;
+        private readonly double populationLimit = 5000000;
 
         public Form1()
         {
@@ -71,6 +72,9 @@ namespace tempApp
             List<Country> valid_countries =
                  get_countries_with_pop_great_or_eq_to_limit(countries, populationLimit);
 
+            calculate_and_display_expected_permutation_count(valid_countries);
+
+
             double ans1 = get_total_distance_as_per_the_order(valid_countries, true);
             textBox1.Text = ans1.ToString();
             //textBox2.Text = get_total_distance_by_all_possible_lines(valid_countries).ToString();
@@ -84,6 +88,16 @@ namespace tempApp
             //double rounded_ans2 = Math.Round(ans2, 2);
             textBox2_round.Text = ans2.ToString();
 
+        }
+
+        private void calculate_and_display_expected_permutation_count(List<Country> valid_countries)
+        {
+            var count = valid_countries.Count();
+            double permutationCount = MathNet.Numerics.SpecialFunctions.Factorial(count);
+            permutationCount = permutationCount / 2;
+           GlobalVars.expectedPermutationCount =permutationCount;
+
+            labelExpPerCountVal.Text = permutationCount.ToString();
         }
 
         //private string get_total_distance_by_all_possible_lines(List<Country> valid_countries)
@@ -199,6 +213,46 @@ namespace tempApp
         }
 
         private void button2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label5_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox3_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label9_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label8_Click(object sender, EventArgs e)
         {
 
         }
