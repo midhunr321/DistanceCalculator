@@ -5,7 +5,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace tempApp
+namespace ProbForInterview
 {
     public static class NetworkHandler
     {
