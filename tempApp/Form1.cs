@@ -12,8 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-
-namespace ProbForInterview
+namespace tempApp
 {
     public partial class Form1 : Form
     {
@@ -88,16 +87,6 @@ namespace ProbForInterview
             //double rounded_ans2 = Math.Round(ans2, 2);
             textBox2_round.Text = ans2.ToString();
 
-        }
-
-        private void calculate_and_display_expected_permutation_count(List<Country> valid_countries)
-        {
-            var count = valid_countries.Count();
-            double permutationCount = MathNet.Numerics.SpecialFunctions.Factorial(count);
-            permutationCount = permutationCount / 2;
-           GlobalVars.expectedPermutationCount =permutationCount;
-
-            labelExpPerCountVal.Text = permutationCount.ToString();
         }
 
         //private string get_total_distance_by_all_possible_lines(List<Country> valid_countries)
