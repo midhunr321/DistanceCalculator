@@ -54,6 +54,8 @@ namespace tempApp
             this.buttonFixPopLimit = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.textBoxPopLimit = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.labelProcessDetail = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -75,13 +77,15 @@ namespace tempApp
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.labelProcessDetail);
+            this.groupBox3.Controls.Add(this.label6);
             this.groupBox3.Controls.Add(this.labelPercentVal);
             this.groupBox3.Controls.Add(this.labelPercentCap);
             this.groupBox3.Controls.Add(this.labelPerCountDoneVal);
             this.groupBox3.Controls.Add(this.labelPerCountDoneCap);
             this.groupBox3.Location = new System.Drawing.Point(71, 155);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(586, 127);
+            this.groupBox3.Size = new System.Drawing.Size(586, 165);
             this.groupBox3.TabIndex = 1;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "PROGRESS";
@@ -298,6 +302,24 @@ namespace tempApp
             this.textBoxPopLimit.Size = new System.Drawing.Size(414, 26);
             this.textBoxPopLimit.TabIndex = 0;
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(81, 132);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(121, 20);
+            this.label6.TabIndex = 6;
+            this.label6.Text = "PROCESS DETAIL";
+            // 
+            // labelProcessDetail
+            // 
+            this.labelProcessDetail.AutoSize = true;
+            this.labelProcessDetail.Location = new System.Drawing.Point(308, 132);
+            this.labelProcessDetail.Name = "labelProcessDetail";
+            this.labelProcessDetail.Size = new System.Drawing.Size(111, 20);
+            this.labelProcessDetail.TabIndex = 7;
+            this.labelProcessDetail.Text = "_________________";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
@@ -348,6 +370,8 @@ namespace tempApp
         private System.Windows.Forms.Button buttonFixPopLimit;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox textBoxPopLimit;
+        private System.Windows.Forms.Label labelProcessDetail;
+        private System.Windows.Forms.Label label6;
     }
 }
 

@@ -12,6 +12,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MathNet;
+using System.Threading;
 
 namespace tempApp
 {
@@ -31,28 +33,41 @@ namespace tempApp
 
             }
         }
-        private void button1_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
             Country[] countries;
             FileInfo fileinfo = new FileInfo("C:\\Downloads\\countriesV2.json");
+            double resultTotalDistByOrder =0 ;
+            double resultTotalDistByAllPossibility=0;
 
-            processJson();
+            var progress = new Progress<ProgRep>(value =>
+            {
+                labelPerCountDoneVal.Text = value.itemsProcessed.ToString();
+                labelProcessDetail.Text = value.currentProcess;
+                labelExpPerCountVal.Text = value.totalItems.ToString();
+                var percent = (value.itemsProcessed / value.totalItems) * 100;
+                percent = Math.Round(percent, 2);
+                labelPercentVal.Text = percent.ToString() + "%";
+            });
 
-            //JObject data = JObject.Parse(File.ReadAllText(@fileinfo.FullName));
 
-            //countries = JsonConvert.DeserializeObject<Country>(yourJson);
+            button1.Enabled = false;
+            await Task.Run(() =>
+            processJson(out resultTotalDistByOrder, out resultTotalDistByAllPossibility,progress));
 
-            //using (StreamReader file = File.OpenText("C:\\Downloads\\countriesV2(1).json"))
-            //using (JsonTextReader reader = new JsonTextReader(file))
-            //{
-            //    countries o2 = (Country[])JToken.ReadFrom(reader);
-            //}
+            textBox1.Text = resultTotalDistByOrder.ToString();
+            textBox2.Text = resultTotalDistByAllPossibility.ToString();
+            button1.Enabled = true;
+           
         }
 
 
-        public void processJson()
+        public void processJson(out double ans1DistByOrder, out double ans2DistByAllPoss,
+            IProgress<ProgRep> progress )
         {
             //
+           
+
             populationLimit = read_PopulationLimit_from_textbox();
 
             string json;
@@ -75,22 +90,31 @@ namespace tempApp
             List<Country> valid_countries =
                  get_countries_with_pop_great_or_eq_to_limit(countries, populationLimit);
 
-            //calculate_and_display_expected_permutation_count(valid_countries);
+        GlobalVars.expectedPermutationCount=calculate_expected_permutation_count(valid_countries);
 
+            check_if_the_array_can_hold_all_datas(GlobalVars.expectedPermutationCount);
 
-            double ans1 = get_total_distance_as_per_the_order(valid_countries, true);
-            textBox1.Text = ans1.ToString();
+             ans1DistByOrder = get_total_distance_as_per_the_order(valid_countries, true);
             //textBox2.Text = get_total_distance_by_all_possible_lines(valid_countries).ToString();
             //double rounded_ans1 = Math.Round(ans1,2);
-            textBox1_round.Text = ans1.ToString();
 
-
-
-            double ans2 = get_total_distance_by_all_possible_lines(valid_countries, true);
-            textBox2.Text = ans2.ToString();
+             ans2DistByAllPoss = Permutate
+                .get_total_distance_by_all_possible_lines(valid_countries,true,progress);
             //double rounded_ans2 = Math.Round(ans2, 2);
-            textBox2_round.Text = ans2.ToString();
 
+        }
+
+        private void check_if_the_array_can_hold_all_datas(double expectedPermutationCount)
+        {
+            int maxIndex = (int) expectedPermutationCount;
+            int[] max = new int[maxIndex];
+        }
+
+        private double calculate_expected_permutation_count(List<Country> valid_countries)
+        {
+            var expectedPermutCount= (MathNet.Numerics.SpecialFunctions.Factorial(valid_countries.Count))/2;
+            GlobalVars.expectedPermutationCount = expectedPermutCount;
+            return expectedPermutCount;
         }
 
         //private string get_total_distance_by_all_possible_lines(List<Country> valid_countries)
@@ -101,54 +125,9 @@ namespace tempApp
         //}
 
 
-        public double get_total_distance_by_all_possible_lines(List<Country> valid_countries,
-            Boolean round_result_of_each_line)
-        {
-            double total_distance = 0;
-            List<CombHolder> combinations = new List<CombHolder>();
-            List<CombSeq> permuted_countriesSeqs =
-                Permutate.get_various_permuted_country_sequences(valid_countries);
-            //List<CombSeq> permuted_non_repeated_countriesSeqs
-            //    = Permutate.remove_repetative_elements_from_permuted_list(permuted_countriesSeqs);
-            ////now we have a whole list of permuted countries sequence
-            ////we need to iterate through each list untill we get the total distance
-            foreach (var countriesSeq in permuted_countriesSeqs)
-            {
-                int i = 0;
-                int lastIndexToIterate = countriesSeq.Countries.Count - 2;
+      
 
-                foreach (var country in countriesSeq.Countries)
-                {
-                    if (i > lastIndexToIterate)
-                        break;
-
-                    var currentCountry = countriesSeq.Countries[i];
-                    var nextCountry = countriesSeq.Countries[i + 1];
-
-                    double result = get_distance_betwn_2combinations(currentCountry,
-                       nextCountry, round_result_of_each_line);
-                    total_distance = total_distance + result;
-                    i++;
-                }
-
-            }
-
-
-            return total_distance;
-
-        }
-
-        private double get_distance_betwn_2combinations(Country country1, Country country2,
-            Boolean round_result_of_each_line)
-        {
-            double cal_distance = 0;
-
-            var result = DistanceCal.getDistance(country1.latlng[0],
-                country2.latlng[0], country1.latlng[1], country2.latlng[1],
-                round_result_of_each_line);
-            return result;
-        }
-
+      
         private double get_total_distance_as_per_the_order(List<Country> valid_countries,
             Boolean roundEachLine)
         {
