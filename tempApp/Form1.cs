@@ -76,9 +76,10 @@ namespace tempApp
                 json = r.ReadToEnd();
                 //List<Country> countries = JsonConvert.DeserializeObject<List<Country>>(json);
             }
-            List<Country> countries =
-               JsonConvert.DeserializeObject<List<Country>>(json);
+            List<CountryFull> countries =
+               JsonConvert.DeserializeObject<List<CountryFull>>(json);
 
+            List<Country> countriesConverted = convert_countryFull_to_country(countries);
             //List<Country> countries =
             //    JsonConvert.DeserializeObject<List<Country>>(json, new JsonSerializerSettings
             //    {
@@ -87,8 +88,10 @@ namespace tempApp
             //var f = countries.Select(x => x.latlng);
 
             //now the countries which satisfy population condition
-            List<Country> valid_countries =
-                 get_countries_with_pop_great_or_eq_to_limit(countries, populationLimit);
+            List<CountryFull> countriesFilteredByPop =
+                 get_countries_with_pop_great_or_eq_to_limit(countries, populationLimit,progress);
+
+            List<Country> valid_countries = convert_countryFull_to_country(countriesFilteredByPop);
 
         GlobalVars.expectedPermutationCount=calculate_expected_permutation_count(valid_countries);
 
@@ -104,10 +107,23 @@ namespace tempApp
 
         }
 
+        private List<Country> convert_countryFull_to_country(List<CountryFull> countries)
+        {
+            List<Country> convertedCountries = new List<Country>();
+            foreach(var country in countries)
+            {
+                Country countryNew = new Country();
+                countryNew.alpha2Code = country.alpha2Code;
+                countryNew.latlng = country.latlng;
+                convertedCountries.Add(countryNew);
+            }
+            return convertedCountries;
+        }
+
         private void check_if_the_array_can_hold_all_datas(double expectedPermutationCount)
         {
-            int maxIndex = (int) expectedPermutationCount;
-            int[] max = new int[maxIndex];
+            List<int> m = new List<int>();
+            
         }
 
         private double calculate_expected_permutation_count(List<Country> valid_countries)
@@ -154,12 +170,16 @@ namespace tempApp
 
         }
 
-        List<Country> get_countries_with_pop_great_or_eq_to_limit(List<Country> countries,
-            double pop_limit_val)
+        List<CountryFull> get_countries_with_pop_great_or_eq_to_limit(List<CountryFull> countries,
+            double pop_limit_val,
+            IProgress<ProgRep> progress)
         {
-            int i = 0;
-            List<Country> valid_countries = new List<Country>();
-            foreach (Country country in countries)
+            ProgRep progRep = new ProgRep();
+            progRep.totalItems = countries.Count;
+
+           int i = 0;
+            List<CountryFull> valid_countries = new List<CountryFull>();
+            foreach (CountryFull country in countries)
             {
                 if (i == 20)
                 {
@@ -168,6 +188,9 @@ namespace tempApp
                 if (country.population >= pop_limit_val)
                     valid_countries.Add(country);
 
+                progRep.currentProcess = "Filtering the countries with Population Limit";
+                progRep.itemsProcessed = i;
+                progress.Report(progRep);
 
                 i++;
             }

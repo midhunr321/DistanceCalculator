@@ -27,6 +27,7 @@ namespace ProbForInterview
         {
             double total_distance = 0;
             List<CombHolder> combinations = new List<CombHolder>();
+            
             List<CombSeq> permuted_countriesSeqs =
                 Permutate.get_various_permuted_country_sequences(valid_countries,progress);
             //List<CombSeq> permuted_non_repeated_countriesSeqs
