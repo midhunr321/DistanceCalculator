@@ -1,5 +1,5 @@
 ﻿
-namespace ProbForInterview
+namespace tempApp
 {
     partial class Form1
     {
