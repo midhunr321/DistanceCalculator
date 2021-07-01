@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using ProbForInterview;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -71,7 +72,7 @@ namespace tempApp
             List<Country> valid_countries =
                  get_countries_with_pop_great_or_eq_to_limit(countries, populationLimit);
 
-            calculate_and_display_expected_permutation_count(valid_countries);
+            //calculate_and_display_expected_permutation_count(valid_countries);
 
 
             double ans1 = get_total_distance_as_per_the_order(valid_countries, true);
