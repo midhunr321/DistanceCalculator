@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ProbForInterview
 {
-    class Country
+   public class Country
     {
      public String alpha2Code;
      public String alpha3Code;

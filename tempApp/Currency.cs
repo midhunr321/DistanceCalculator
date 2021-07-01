@@ -1,6 +1,6 @@
 ﻿using System;
 
-class Currency
+public class Currency
 {
   public String code;
   public String name;

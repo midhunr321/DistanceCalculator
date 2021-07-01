@@ -1,6 +1,6 @@
 ﻿using System;
 
-class Language
+public class Language
 {
   public String iso639_1;
   public String iso639_2;

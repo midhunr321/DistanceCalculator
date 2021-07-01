@@ -1,6 +1,6 @@
 ﻿using System;
 
-class RegionalBloc
+public class RegionalBloc
 {
   public String acronym;
   public String name;

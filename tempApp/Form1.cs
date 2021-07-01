@@ -17,7 +17,7 @@ namespace ProbForInterview
 {
     public partial class Form1 : Form
     {
-        private readonly double populationLimit = 5000000;
+        private readonly double populationLimit = 550;
 
         public Form1()
         {
@@ -108,7 +108,7 @@ namespace ProbForInterview
         //}
 
 
-        private double get_total_distance_by_all_possible_lines(List<Country> valid_countries,
+        public double get_total_distance_by_all_possible_lines(List<Country> valid_countries,
             Boolean round_result_of_each_line)
         {
             double total_distance = 0;
@@ -135,6 +135,7 @@ namespace ProbForInterview
                     double result = get_distance_betwn_2combinations(currentCountry,
                        nextCountry, round_result_of_each_line);
                     total_distance = total_distance + result;
+                    i++;
                 }
 
             }
