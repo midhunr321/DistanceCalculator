@@ -17,7 +17,7 @@ namespace tempApp
 {
     public partial class Form1 : Form
     {
-        private readonly double populationLimit = 550;
+        private double populationLimit = 0;
 
         public Form1()
         {
@@ -35,6 +35,7 @@ namespace tempApp
         {
             Country[] countries;
             FileInfo fileinfo = new FileInfo("C:\\Downloads\\countriesV2.json");
+
             processJson();
 
             //JObject data = JObject.Parse(File.ReadAllText(@fileinfo.FullName));
@@ -52,6 +53,8 @@ namespace tempApp
         public void processJson()
         {
             //
+            populationLimit = read_PopulationLimit_from_textbox();
+
             string json;
             using (StreamReader r = new StreamReader("C:\\Downloads\\countriesV2.json"))
             {
@@ -244,6 +247,24 @@ namespace tempApp
         }
 
         private void label8_Click(object sender, EventArgs e)
+        {
+
+        }
+
+       private double read_PopulationLimit_from_textbox()
+        {
+            double popLimit;
+            double.TryParse(textBoxPopLimit.Text.ToString(),out popLimit);
+            return popLimit;
+
+        }
+        private void buttonFixPopLimit_Click(object sender, EventArgs e)
+        {
+          populationLimit =   read_PopulationLimit_from_textbox();
+            button1.Enabled = true;
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
         {
 
         }
