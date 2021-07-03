@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace ProbForInterview
+namespace DistanceCalculator
 {
-   public class CountryFull
+   public class CountryFull :IComparable<CountryFull>
     {
      public String alpha2Code;
      public String alpha3Code;
@@ -54,7 +55,19 @@ namespace ProbForInterview
         public Language[] Languages { get => languages; set => languages = value; }
         public RegionalBloc[] RegionalBlocs { get => regionalBlocs; set => regionalBlocs = value; }
 
-       
+        public int CompareTo([AllowNull] CountryFull other)
+        {
+            if (other == null)
+                throw new NullReferenceException();
+            if (this.population > other.population)
+                return 1;
+            else if (this.population < other.population)
+                return -1;
+            else if (this.population == other.population)
+                return 0;
+
+            return 0;
+        }
     }
 
 

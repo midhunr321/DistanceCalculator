@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProbForInterview", "tempApp\ProbForInterview.csproj", "{F0FA45E7-B5A3-4331-939D-7652FA428625}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DistanceCalculator", "tempApp\DistanceCalculator.csproj", "{F0FA45E7-B5A3-4331-939D-7652FA428625}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject1", "TestProject1\TestProject1.csproj", "{2592F885-8FDB-4679-AFB9-7C99A2BAFAEA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestProject1", "TestProject1\TestProject1.csproj", "{2592F885-8FDB-4679-AFB9-7C99A2BAFAEA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

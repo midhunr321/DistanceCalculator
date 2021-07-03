@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using tempApp;
 
-namespace ProbForInterview
+namespace DistanceCalculator
 {
     static class Program
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ProbForInterview
+namespace DistanceCalculator
 {
     static class DistanceCal
     {
@@ -59,6 +59,9 @@ namespace ProbForInterview
 
             return result;
         }
+
+     
+        
 
      
     }

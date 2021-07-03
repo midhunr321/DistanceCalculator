@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using ProbForInterview;
+using DistanceCalculator;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -35,10 +35,11 @@ namespace tempApp
         }
         private async void button1_Click(object sender, EventArgs e)
         {
+            test_new_permutation();
             Country[] countries;
             FileInfo fileinfo = new FileInfo("C:\\Downloads\\countriesV2.json");
-            double resultTotalDistByOrder =0 ;
-            double resultTotalDistByAllPossibility=0;
+            double resultTotalDistByOrder = 0;
+            double resultTotalDistByAllPossibility = 0;
 
             var progress = new Progress<ProgRep>(value =>
             {
@@ -53,22 +54,30 @@ namespace tempApp
 
             button1.Enabled = false;
             await Task.Run(() =>
-            processJson(out resultTotalDistByOrder, out resultTotalDistByAllPossibility,progress));
+            processJson(out resultTotalDistByOrder, out resultTotalDistByAllPossibility, progress));
 
             textBox1.Text = resultTotalDistByOrder.ToString();
             textBox2.Text = resultTotalDistByAllPossibility.ToString();
             button1.Enabled = true;
-           
+
+        }
+        private void test_new_permutation()
+        {
+            List<String> elements = new List<string> { "A", "B", "C", "D" };
+
+            var sorted = Permutations.PermutationErezRobinson.QuickPerm(elements);
+
+
         }
 
 
         public void processJson(out double ans1DistByOrder, out double ans2DistByAllPoss,
-            IProgress<ProgRep> progress )
+            IProgress<ProgRep> progress)
         {
             //
-           
 
-            populationLimit = read_PopulationLimit_from_textbox();
+
+            //populationLimit = read_PopulationLimit_from_textbox();
 
             string json;
             using (StreamReader r = new StreamReader("C:\\Downloads\\countriesV2.json"))
@@ -88,21 +97,38 @@ namespace tempApp
             //var f = countries.Select(x => x.latlng);
 
             //now the countries which satisfy population condition
-            List<CountryFull> countriesFilteredByPop =
-                 get_countries_with_pop_great_or_eq_to_limit(countries, populationLimit,progress);
+            String filterType = new string("Normal");
+            List<CountryFull> countriesFilteredByPop = new List<CountryFull>();
+            if (filterType == "Normal")
+            {
+                 countriesFilteredByPop =
+                get_countries_with_pop_great_or_eq_to_limit(countries, populationLimit, progress);
+            }
+            else if(filterType == "Desc"){
+                countriesFilteredByPop
+                    = Permutate.get_countries_with_pop_great_but_first_process_then_filter_then_sort
+                    (countries, populationLimit, progress, false);
+                    
+            }
+            else if(filterType == "Asc"){
+                countriesFilteredByPop
+                 = Permutate.get_countries_with_pop_great_but_first_process_then_filter_then_sort
+                 (countries, populationLimit, progress, true);
+            }
+           
 
             List<Country> valid_countries = convert_countryFull_to_country(countriesFilteredByPop);
 
-        GlobalVars.expectedPermutationCount=calculate_expected_permutation_count(valid_countries);
+            GlobalVars.expectedPermutationCount = calculate_expected_permutation_count(valid_countries);
 
             check_if_the_array_can_hold_all_datas(GlobalVars.expectedPermutationCount);
 
-             ans1DistByOrder = get_total_distance_as_per_the_order(valid_countries, true);
+            ans1DistByOrder = Permutate.get_total_distance_as_per_the_order(valid_countries, false);
             //textBox2.Text = get_total_distance_by_all_possible_lines(valid_countries).ToString();
             //double rounded_ans1 = Math.Round(ans1,2);
 
-             ans2DistByAllPoss = Permutate
-                .get_total_distance_by_all_possible_lines(valid_countries,true,progress);
+            ans2DistByAllPoss = Permutate
+               .get_total_distance_by_all_possible_lines(valid_countries, false, progress);
             //double rounded_ans2 = Math.Round(ans2, 2);
 
         }
@@ -110,7 +136,7 @@ namespace tempApp
         private List<Country> convert_countryFull_to_country(List<CountryFull> countries)
         {
             List<Country> convertedCountries = new List<Country>();
-            foreach(var country in countries)
+            foreach (var country in countries)
             {
                 Country countryNew = new Country();
                 countryNew.alpha2Code = country.alpha2Code;
@@ -122,13 +148,22 @@ namespace tempApp
 
         private void check_if_the_array_can_hold_all_datas(double expectedPermutationCount)
         {
-            List<int> m = new List<int>();
-            
+            try
+            {
+                int index = (int)expectedPermutationCount;
+                int[] test = new int[index];
+            }
+            catch (OverflowException)
+            {
+                MessageBox.Show("This Population limit cannot be carried out");
+            }
+
+
         }
 
         private double calculate_expected_permutation_count(List<Country> valid_countries)
         {
-            var expectedPermutCount= (MathNet.Numerics.SpecialFunctions.Factorial(valid_countries.Count))/2;
+            var expectedPermutCount = (MathNet.Numerics.SpecialFunctions.Factorial(valid_countries.Count)) / 2;
             GlobalVars.expectedPermutationCount = expectedPermutCount;
             return expectedPermutCount;
         }
@@ -141,34 +176,9 @@ namespace tempApp
         //}
 
 
-      
 
-      
-        private double get_total_distance_as_per_the_order(List<Country> valid_countries,
-            Boolean roundEachLine)
-        {
-            double total_distance = 0;
-            int currentIndex = 0;
-            int lastIndexToIterate = valid_countries.Count - 2;
-            foreach (Country currCountry in valid_countries)
-            {
-                if (currentIndex > lastIndexToIterate)
-                    break;
 
-                int nextCountryIndex = currentIndex + 1;
-                Country nextCountry = valid_countries[nextCountryIndex];
 
-                var result = DistanceCal.getDistance(currCountry.latlng[0],
-                    nextCountry.latlng[0], currCountry.latlng[1], nextCountry.latlng[1]
-                    , roundEachLine);
-                total_distance = total_distance + result;
-
-                currentIndex++;
-            }
-
-            return total_distance;
-
-        }
 
         List<CountryFull> get_countries_with_pop_great_or_eq_to_limit(List<CountryFull> countries,
             double pop_limit_val,
@@ -177,7 +187,7 @@ namespace tempApp
             ProgRep progRep = new ProgRep();
             progRep.totalItems = countries.Count;
 
-           int i = 0;
+            int i = 0;
             List<CountryFull> valid_countries = new List<CountryFull>();
             foreach (CountryFull country in countries)
             {
@@ -200,7 +210,7 @@ namespace tempApp
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-           
+
         }
 
         private void label4_Click(object sender, EventArgs e)
@@ -210,7 +220,7 @@ namespace tempApp
 
         private void button2_Click(object sender, EventArgs e)
         {
-
+            test_new_permutation();
         }
 
         private void label5_Click(object sender, EventArgs e)
@@ -253,20 +263,31 @@ namespace tempApp
 
         }
 
-       private double read_PopulationLimit_from_textbox()
+        private double read_PopulationLimit_from_textbox()
         {
             double popLimit;
-            double.TryParse(textBoxPopLimit.Text.ToString(),out popLimit);
+            double.TryParse(textBoxPopLimit.Text.ToString(), out popLimit);
             return popLimit;
 
         }
         private void buttonFixPopLimit_Click(object sender, EventArgs e)
         {
-          populationLimit =   read_PopulationLimit_from_textbox();
+            populationLimit = read_PopulationLimit_from_textbox();
             button1.Enabled = true;
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonWebPage_Click(object sender, EventArgs e)
+        {
+            WebHelper webHelper = new WebHelper();
+            webHelper.findText("Population limit:");
+        }
+
+        private void label2_Click(object sender, EventArgs e)
         {
 
         }

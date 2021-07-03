@@ -5,7 +5,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace ProbForInterview
+namespace DistanceCalculator
 {
     public static class NetworkHandler
     {

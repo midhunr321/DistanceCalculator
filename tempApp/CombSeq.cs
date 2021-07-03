@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ProbForInterview
+namespace DistanceCalculator
 {
-    class CombSeq
+  public  class CombSeq
     {
         List<Country> countries;
 

@@ -1,15 +1,16 @@
 ﻿using KellermanSoftware.CompareNetObjects;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Text;
 
-namespace ProbForInterview
+namespace DistanceCalculator
 {
 
-    class Permutate
+   public class Permutate
     {
-
-
+        
 
         static private double get_distance_betwn_2combinations(Country country1, Country country2,
              Boolean round_result_of_each_line)
@@ -19,17 +20,43 @@ namespace ProbForInterview
             var result = DistanceCal.getDistance(country1.latlng[0],
                 country2.latlng[0], country1.latlng[1], country2.latlng[1],
                 round_result_of_each_line);
+           
             return result;
         }
+        static public double get_total_distance_as_per_the_order(List<Country> valid_countries,
+            Boolean roundEachLine)
+        {
+            double total_distance = 0;
+            int currentIndex = 0;
+            int lastIndexToIterate = valid_countries.Count - 2;
+            foreach (Country currCountry in valid_countries)
+            {
+                if (currentIndex > lastIndexToIterate)
+                    break;
 
+                int nextCountryIndex = currentIndex + 1;
+                Country nextCountry = valid_countries[nextCountryIndex];
+
+                var result = DistanceCal.getDistance(currCountry.latlng[0],
+                    nextCountry.latlng[0], currCountry.latlng[1], nextCountry.latlng[1]
+                    , roundEachLine);
+                total_distance = total_distance + result;
+
+                currentIndex++;
+            }
+
+            return total_distance;
+
+        }
+        
         static public double get_total_distance_by_all_possible_lines
               (List<Country> valid_countries, bool round_result_of_each_line, IProgress<ProgRep> progress)
         {
             double total_distance = 0;
             List<CombHolder> combinations = new List<CombHolder>();
-            
+
             List<CombSeq> permuted_countriesSeqs =
-                Permutate.get_various_permuted_country_sequences(valid_countries,progress);
+                Permutate.get_various_permuted_country_sequences(valid_countries, progress);
             //List<CombSeq> permuted_non_repeated_countriesSeqs
             //    = Permutate.remove_repetative_elements_from_permuted_list(permuted_countriesSeqs);
             ////now we have a whole list of permuted countries sequence
@@ -68,11 +95,11 @@ namespace ProbForInterview
             b = temp;
         }
 
-        private static void GetPer(Country[] list, 
-            List<CombSeq> combSeqs,IProgress<ProgRep> progress)
+        private static void GetPer(Country[] list,
+            List<CombSeq> combSeqs, IProgress<ProgRep> progress)
         {
             int x = list.Length - 1;
-            GetPer(list, 0, x, combSeqs,progress);
+            GetPer(list, 0, x, combSeqs, progress);
         }
 
         private static List<Country> array_to_list(Country[] array)
@@ -93,8 +120,8 @@ namespace ProbForInterview
             }
             return sequences;
         }
-        private static void GetPer(Country[] list, int k, int m, 
-            List<CombSeq> combSeqs,IProgress<ProgRep> progress)
+        private static void GetPer(Country[] list, int k, int m,
+            List<CombSeq> combSeqs, IProgress<ProgRep> progress)
         {
             if (k == m)
             {
@@ -105,11 +132,13 @@ namespace ProbForInterview
                       (combSeq, combSeqs) == false)
                 {
                     combSeqs.Add(combSeq);
+                  
                     ProgRep progRep = new ProgRep();
                     progRep.itemsProcessed = combSeqs.Count;
                     progRep.currentProcess = new string("Taking Permutation...");
                     progRep.totalItems = GlobalVars.expectedPermutationCount;
-                    progress.Report(progRep);
+                    if (progress != null)
+                        progress.Report(progRep);
                 }
 
                 Console.Write(list);
@@ -118,7 +147,7 @@ namespace ProbForInterview
                 for (int i = k; i <= m; i++)
                 {
                     Swap(ref list[k], ref list[i]);
-                    GetPer(list, k + 1, m, combSeqs,progress);
+                    GetPer(list, k + 1, m, combSeqs, progress);
                     Swap(ref list[k], ref list[i]);
                 }
 
@@ -159,13 +188,45 @@ namespace ProbForInterview
             }
             return false;
         }
+      static  public  List<CountryFull> get_countries_with_pop_great_but_first_process_then_filter_then_sort
+              (List<CountryFull> countries,
+             double pop_limit_val,
+             IProgress<ProgRep> progress, Boolean ascendingOrder)
+        {
+            ProgRep progRep = new ProgRep();
+            progRep.totalItems = countries.Count;
+
+            int i = 0;
+            List<CountryFull> valid_countries = new List<CountryFull>();
+            foreach (CountryFull country in countries)
+            {
+                if (country.population >= pop_limit_val)
+                    valid_countries.Add(country);
+
+                progRep.currentProcess = "Filtering the countries with Population Limit";
+                progRep.itemsProcessed = i;
+                progress.Report(progRep);
+            }
+            valid_countries.Sort();
+
+            if (ascendingOrder == false)
+            {
+                valid_countries.Reverse();
+
+            }
+            //var valid_countries_descendingOrder = sort_array(valid_countries, false);
+
+
+            return valid_countries;
+        }
+     
 
         public static List<CombSeq> get_various_permuted_country_sequences
-            (List<Country> countries_b4_per, IProgress<ProgRep> progress)
+        (List<Country> countries_b4_per, IProgress<ProgRep> progress)
         {
             Country[] countries_b4_per_arry = countries_b4_per.ToArray();
             List<CombSeq> permuted_countries_Seqs = new List<CombSeq>();
-            GetPer(countries_b4_per_arry, permuted_countries_Seqs,progress);
+            GetPer(countries_b4_per_arry, permuted_countries_Seqs, progress);
             return permuted_countries_Seqs;
         }
 
