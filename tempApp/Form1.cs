@@ -19,7 +19,7 @@ namespace tempApp
 {
     public partial class Form1 : Form
     {
-        private double populationLimit = 0;
+        private double populationLimit = 57100;
 
         public Form1()
         {
@@ -36,6 +36,7 @@ namespace tempApp
         private async void button1_Click(object sender, EventArgs e)
         {
             test_new_permutation();
+            bool skipPossibilityDistance = true;
             Country[] countries;
             FileInfo fileinfo = new FileInfo("C:\\Downloads\\countriesV2.json");
             double resultTotalDistByOrder = 0;
@@ -54,7 +55,8 @@ namespace tempApp
 
             button1.Enabled = false;
             await Task.Run(() =>
-            processJson(out resultTotalDistByOrder, out resultTotalDistByAllPossibility, progress));
+            processJson(out resultTotalDistByOrder, out resultTotalDistByAllPossibility, progress,
+            skipPossibilityDistance));
 
             textBox1.Text = resultTotalDistByOrder.ToString();
             textBox2.Text = resultTotalDistByAllPossibility.ToString();
@@ -72,7 +74,7 @@ namespace tempApp
 
 
         public void processJson(out double ans1DistByOrder, out double ans2DistByAllPoss,
-            IProgress<ProgRep> progress)
+            IProgress<ProgRep> progress, bool skipPossibilityDistance)
         {
             //
 
@@ -88,7 +90,6 @@ namespace tempApp
             List<CountryFull> countries =
                JsonConvert.DeserializeObject<List<CountryFull>>(json);
 
-            List<Country> countriesConverted = convert_countryFull_to_country(countries);
             //List<Country> countries =
             //    JsonConvert.DeserializeObject<List<Country>>(json, new JsonSerializerSettings
             //    {
@@ -101,47 +102,63 @@ namespace tempApp
             List<CountryFull> countriesFilteredByPop = new List<CountryFull>();
             if (filterType == "Normal")
             {
-                 countriesFilteredByPop =
-                get_countries_with_pop_great_or_eq_to_limit(countries, populationLimit, progress);
+                countriesFilteredByPop =
+               get_countries_with_pop_great_or_eq_to_limit(countries, populationLimit, progress);
             }
-            else if(filterType == "Desc"){
+            else if (filterType == "Desc")
+            {
                 countriesFilteredByPop
                     = Permutate.get_countries_with_pop_great_but_first_process_then_filter_then_sort
                     (countries, populationLimit, progress, false);
-                    
+
             }
-            else if(filterType == "Asc"){
+            else if (filterType == "Asc")
+            {
                 countriesFilteredByPop
                  = Permutate.get_countries_with_pop_great_but_first_process_then_filter_then_sort
                  (countries, populationLimit, progress, true);
-            }
-           
+            }		
 
-            List<Country> valid_countries = convert_countryFull_to_country(countriesFilteredByPop);
+
+
+            List<Country> valid_countries = convert_countryFull_to_country_and_select_20_items(countriesFilteredByPop);
 
             GlobalVars.expectedPermutationCount = calculate_expected_permutation_count(valid_countries);
 
-            check_if_the_array_can_hold_all_datas(GlobalVars.expectedPermutationCount);
+            //check_if_the_array_can_hold_all_datas(GlobalVars.expectedPermutationCount);
 
-            ans1DistByOrder = Permutate.get_total_distance_as_per_the_order(valid_countries, false);
+            ans1DistByOrder = Permutate.get_total_distance_as_per_the_order(valid_countries,true);
             //textBox2.Text = get_total_distance_by_all_possible_lines(valid_countries).ToString();
             //double rounded_ans1 = Math.Round(ans1,2);
 
-            ans2DistByAllPoss = Permutate
-               .get_total_distance_by_all_possible_lines(valid_countries, false, progress);
-            //double rounded_ans2 = Math.Round(ans2, 2);
+            if (skipPossibilityDistance == false)
+            {
+                ans2DistByAllPoss = Permutate
+                    .get_total_distance_by_all_possible_lines(valid_countries, false, progress);
+                //double rounded_ans2 = Math.Round(ans2, 2);
+            }
+            else
+            {
+                ans2DistByAllPoss = -1;
+            }
 
         }
 
-        private List<Country> convert_countryFull_to_country(List<CountryFull> countries)
+        private List<Country> convert_countryFull_to_country_and_select_20_items(List<CountryFull> countries)
         {
             List<Country> convertedCountries = new List<Country>();
+            int i = 0;
             foreach (var country in countries)
             {
+                if (i >= 20)
+                    break;
+
                 Country countryNew = new Country();
                 countryNew.alpha2Code = country.alpha2Code;
                 countryNew.latlng = country.latlng;
+                countryNew.population = country.population;
                 convertedCountries.Add(countryNew);
+                i++;
             }
             return convertedCountries;
         }

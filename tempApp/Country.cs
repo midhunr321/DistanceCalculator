@@ -8,6 +8,7 @@ namespace DistanceCalculator
     {
      public String alpha2Code;
      public double[] latlng;
+        public double population;
 
 
         public string Alpha2Code { get => alpha2Code; set => alpha2Code = value; }
